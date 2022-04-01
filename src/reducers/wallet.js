@@ -9,8 +9,6 @@
 //   }
 // }
 
-import { Component } from "react/cjs/react.production.min";
-
 // Esse reducer será responsável por tratar as informações da pessoa usuária
 const initialState = {
   currencies: [],

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Header.css';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { totalExpenses } from '../actions';
+// import { totalExpenses } from '../actions';
 
 class Header extends Component {
   render() {
