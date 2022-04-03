@@ -1,46 +1,42 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+// import PropTypes from 'prop-types';
+// import { connect } from 'react-redux';
+// import { fetchCurrencies } from '../actions';
 import Header from '../components/Header';
-import Loading from '../components/Loading';
-import { fetchCurrencies } from '../actions';
 import FormExpense from '../components/FormExpense';
+import TableExpense from '../components/TableExpense';
 
 class Wallet extends React.Component {
-  componentDidMount() {
-    const { getCurrencies } = this.props;
-    getCurrencies();
-    // console.log(getCurrencies());
-  }
-
   render() {
-    const { loading } = this.props;
-    // console.log(currencies);
     return (
       <div>
         <Header />
-        { loading ? <Loading /> : <FormExpense /> }
+        {/* { loading ? <Loading /> : <FormExpense /> } */}
+        <FormExpense />
+        <TableExpense />
       </div>
     );
   }
 }
 
-Wallet.propTypes = {
-  getCurrencies: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired,
-  // currencies: PropTypes.arrayOf(
-  //   PropTypes.any,
-  // ).isRequired,
-};
+// Wallet.propTypes = {
+//   getCurrencies: PropTypes.func.isRequired,
+//   loading: PropTypes.bool.isRequired,
+//   // currencies: PropTypes.arrayOf(
+//   //   PropTypes.any,
+//   // ).isRequired,
+// };
 
-// mapeie o estado global para a propriedade da sua aplicação
-const mapDispatchToProps = (dispatch) => ({
-  getCurrencies: () => dispatch(fetchCurrencies()),
-});
+// // mapeie o estado global para a propriedade da sua aplicação
+// const mapDispatchToProps = (dispatch) => ({
+//   getCurrencies: () => dispatch(fetchCurrencies()),
+// });
 
-const mapStateToProps = (state) => ({
-  currencies: state.wallet.currencies,
-  loading: state.wallet.isLoading,
-});
+// const mapStateToProps = (state) => ({
+//   currencies: state.wallet.currencies,
+//   loading: state.wallet.isLoading,
+//   isQuotationAvailable: state.wallet.isQuotationAvailable,
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
+// export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
+export default Wallet;

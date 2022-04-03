@@ -1,19 +1,10 @@
 // Esse reducer será responsável por tratar o todas as informações relacionadas as despesas
-// {
-//   user: {
-//     email: '',
-//   },
-//   wallet: {
-//     currencies: [],
-//     expenses: []
-//   }
-// }
-
-// Esse reducer será responsável por tratar as informações da pessoa usuária
 const initialState = {
   isLoading: false,
+  isQuotationAvailable: false,
   currencies: [],
   expenses: [],
+  currQuotation: {},
   total: 0,
 };
 
@@ -36,10 +27,28 @@ function wallet(state = initialState, action) {
       currencies: action.value,
       isLoading: false,
     };
-  case 'TOTAL':
+  case 'GET_CURR_QUOTATION':
     return {
       ...state,
-      total: initialState.total, // action.value,
+      currQuotation: action.current,
+      isLoading: false,
+      isQuotationAvailable: true,
+    };
+  case 'RESET_QUOTE':
+    return {
+      ...state,
+      isQuotationAvailable: false,
+    };
+  case 'SET_TOTAL':
+    return {
+      ...state,
+      total: action.total,
+    };
+  case 'SET_EXPENSES':
+    return {
+      ...state,
+      expenses: [...state.expenses, action.expense],
+      isQuotationAvailable: false,
     };
   default:
     return state;
