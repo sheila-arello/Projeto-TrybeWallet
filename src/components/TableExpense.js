@@ -1,23 +1,35 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { setAllExpenses, setTotal } from '../actions';
 import './TableExpense.css';
 
 class TableExpense extends React.Component {
+  handleDelete = ({ target }) => {
+    // excluir expense do estado global
+    const deleteElem = parseInt(target.parentElement.parentElement.id, 10);
+    console.log(typeof deleteElem);
+    const { expenses, saveExpenses, calcTotal } = this.props;
+    if (expenses.length === 1) return [];
+    const newExpenses = expenses.filter((expense, index) => index !== deleteElem);
+    console.log(newExpenses);
+    saveExpenses(newExpenses);
+    calcTotal();
+  }
+
   renderExpenses = () => {
     const { expenses } = this.props;
     if (expenses.length === 0) return null;
     return (
-      expenses.map((expense) => {
+      expenses.map((expense, index) => {
         const moeda = expense.exchangeRates[expense.currency];
         // const rate = Math.round(parseFloat(moeda.ask).toFixed(2));
         const rate = parseFloat(moeda.ask).toFixed(2);
-        console.log(rate);
         const moedaName = moeda.name.split('/')[0];
         const conversão = 'Real'; // moeda.name.split('/')[1];
         const vlrConverted = parseFloat(expense.value) * parseFloat(moeda.ask); // parseFloat(moeda.ask);
         return (
-          <tr className="tr-expenses" key={ expense.key }>
+          <tr className="tr-expenses" id={ index } key={ index }>
             <td role="cell">{ expense.description }</td>
             <td role="cell">{ expense.tag }</td>
             <td role="cell">{ expense.method }</td>
@@ -26,7 +38,21 @@ class TableExpense extends React.Component {
             <td role="cell">{ rate }</td>
             <td role="cell">{ vlrConverted.toFixed(2) }</td>
             <td role="cell">{ conversão }</td>
-            <td role="cell">Editar/Excluir</td>
+            <td role="cell">
+              <button
+                type="button"
+                data-testid="edit-btn"
+              >
+                Editar
+              </button>
+              <button
+                type="button"
+                data-testid="delete-btn"
+                onClick={ (e) => this.handleDelete(e) }
+              >
+                Excluir
+              </button>
+            </td>
           </tr>
         );
       }));
@@ -76,6 +102,8 @@ class TableExpense extends React.Component {
 }
 
 TableExpense.propTypes = {
+  saveExpenses: PropTypes.func.isRequired,
+  calcTotal: PropTypes.func.isRequired,
   expenses: PropTypes.arrayOf(
     PropTypes.any,
   ).isRequired,
@@ -83,7 +111,11 @@ TableExpense.propTypes = {
 
 const mapStateToProps = (state) => ({
   expenses: state.wallet.expenses,
-
 });
 
-export default connect(mapStateToProps, null)(TableExpense);
+const mapDispatchToProps = (dispatch) => ({
+  saveExpenses: (expenses) => dispatch(setAllExpenses(expenses)),
+  calcTotal: () => dispatch(setTotal()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TableExpense);

@@ -32,3 +32,19 @@ th , td {
   text-align: center;
 }
 
+td button {
+  border-radius: 10px;
+  border: none;
+  color: white;
+  font-size: 0.8em;
+  margin: 2px;
+  padding: 4px;
+}
+
+td button:nth-child( 1 ) {
+  background-color: rgb(2, 48, 49);
+}
+
+td button:nth-child( 2 ) {
+  background-color: red;
+}

@@ -44,10 +44,16 @@ function wallet(state = initialState, action) {
       ...state,
       total: action.total,
     };
-  case 'SET_EXPENSES':
+  case 'ADD_EXPENSE':
     return {
       ...state,
       expenses: [...state.expenses, action.expense],
+      isQuotationAvailable: false,
+    };
+  case 'SET_ALL_EXPENSES':
+    return {
+      ...state,
+      expenses: action.expenses,
       isQuotationAvailable: false,
     };
   default:

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 class Header extends Component {
   render() {
     const { email, total } = this.props;
-    console.log(total);
+
     return (
       <div className="header-container">
         <header data-testid="header-component">
@@ -16,7 +16,10 @@ class Header extends Component {
             <p>My Finances</p>
             <div className="esquerda">
               <p data-testid="email-field">{ `Email: ${email}` }</p>
-              <p data-testid="total-field">Despesa Total: 0 </p>
+              <span>Despesa Total: </span>
+              <span data-testid="total-field">
+                { (total === undefined) ? 0 : total.toFixed(2) }
+              </span>
               {/* <p data-testid="total-field">{ `Despesa Total: ${total} ` }</p> */}
               <p data-testid="header-currency-field">BRL</p>
             </div>

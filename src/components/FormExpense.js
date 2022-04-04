@@ -3,26 +3,29 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { fetchCurrencies,
   fetchCurrQuotation,
-  setExpenses,
+  addExpense,
   setTotal } from '../actions';
 import Loading from './Loading';
+
+const alim = 'Alimentação';
 
 class FormExpense extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: 0,
       currency: 'USD',
-      tag: 'Alimentação',
+      tag: alim,
       method: 'Dinheiro',
-      value: '',
+      value: '0',
       description: '',
+      expense: {},
     };
   }
 
   componentDidMount() {
     const { getCurrencies } = this.props;
     getCurrencies();
-    // console.log(getCurrencies());
   }
 
   onInputChange = ({ target }) => {
@@ -30,84 +33,54 @@ class FormExpense extends React.Component {
     this.setState({ [name]: value });
   }
 
-  onSubmitButtonClick = (e) => {
-    e.preventDefault();
-    const { quotation } = this.props;
-    quotation();
-  }
-
-  updateSelect = () => {
-    const selects = document.querySelectorAll('.choices');
-    if (selects.length === 0) return null;
-    const currency = selects[0].value;
-    const method = selects[1].value;
-    const tag = selects[2].value;
-    this.setState({
+  onSubmitButtonClick = () => {
+    // event.preventDefault();
+    // const { quotation } = this.props;
+    // await quotation();
+    const {
+      id,
       currency,
-      method,
       tag,
-    });
+      method,
+      value,
+      description,
+    } = this.state;
+    this.setState({
+      expense: {
+        id,
+        currency,
+        tag,
+        method,
+        value,
+        description },
+      id: id + 1,
+      currency: 'USD',
+      tag: alim,
+      method: 'Dinheiro',
+      value: '0',
+      description: '',
+    }, () => this.setExpenses());
   }
 
-  setExpenses = () => {
-    // incrementar o id no state global (no redux)
-    // adicionar á expense o exchangeRates
-    // calcular o total para atualizar o cabeçalho
-    const { currQuotation,
-      isQuotationAvailable,
-      saveExpense,
-      calcTotal } = this.props;
-    if (isQuotationAvailable) {
-      // Dispara action para salvar expense com state local + quotation
-      // a mesma action reseta o isQuotationAvailable
-      this.updateSelect();
-      const objExpense = {
-        ...this.state,
-        exchangeRates: currQuotation,
-      };
-      console.log('Agora sim dispara as açoes');
-      saveExpense(objExpense);
-      calcTotal();
-    }
+  setExpenses = async () => {
+    const { quotation } = this.props;
+    // const { quotation } = this.props;
+    await quotation();
+    // Dispara action para salvar expense com state local + quotation
+    // a mesma action reseta o isQuotationAvailable
+    const { currQuotation, saveExpense, calcTotal } = this.props;
+
+    console.log('nova cotacao: ', currQuotation);
+    const { expense } = this.state;
+    // if (expense === undefined) console.log(expense);
+    const objExpense = {
+      ...expense,
+      exchangeRates: currQuotation,
+    };
+    // console.log('Agora sim dispara as açoes');
+    saveExpense(objExpense);
+    calcTotal();
   }
-
-  renderInput = (name, placeHolder) => (
-    <label htmlFor={ name }>
-      { `${name}:` }
-      <input
-        placeholder={ placeHolder }
-        data-testid={ `${name}-input` }
-        id={ name }
-        type="text"
-        name={ name }
-        // value={ name }
-        onChange={ this.onInputChange }
-      />
-    </label>
-  );
-
-  renderSelect = (name, arrValues) => (
-    <label htmlFor={ (name === 'currency') ? 'moeda' : `${name}` }>
-      { (name === 'currency') ? 'moeda:' : `${name}:` }
-      <select
-        className="choices"
-        id={ (name === 'currency') ? 'moeda' : `${name}` }
-        name={ name }
-        // value={ name }
-        onChange={ this.onInputChange }
-        data-testid={ `${name}-input` }
-      >
-        { arrValues.map((curr) => (
-          <option
-            key={ curr }
-            value={ curr }
-          >
-            { curr }
-          </option>
-        ))}
-      </select>
-    </label>
-  )
 
   // formLoad = () => {
   //   const { both } = this.state;
@@ -115,24 +88,93 @@ class FormExpense extends React.Component {
   //   return both.map((li) => <Input name={ li[0] } placeH={ li[1] } key={ li[0] } />);
   // }
 
+  renderOption = (curr) => (
+    <option
+      key={ curr }
+      value={ curr }
+    >
+      { curr }
+    </option>
+  );
+
   render() {
     const { currencies, loading } = this.props;
-    // this.setExpenses();
     if (loading) return <Loading />;
-    this.setExpenses();
+    const {
+      currency,
+      tag,
+      method,
+      value,
+      description } = this.state;
+    const arrMethod = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
+    const arrTag = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
+
     return (
       <form className="form-expense">
-        { this.renderInput('value', 'valor') }
-        { this.renderInput('description', 'descrição') }
-        { this.renderSelect('currency', currencies) }
-        { this.renderSelect(
-          'method',
-          ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'],
-        ) }
-        { this.renderSelect(
-          'tag',
-          ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'],
-        ) }
+        <label htmlFor="value">
+          Value
+          <input
+            placeholder="valor"
+            data-testid="value-input"
+            id="value"
+            type="text"
+            name="value"
+            value={ value }
+            onChange={ this.onInputChange }
+          />
+        </label>
+        <label htmlFor="description">
+          Description
+          <input
+            placeholder="descrição"
+            data-testid="description-input"
+            id="description"
+            type="text"
+            name="description"
+            value={ description }
+            onChange={ this.onInputChange }
+          />
+        </label>
+        <label htmlFor="moeda">
+          Moeda
+          <select
+            className="choices"
+            id="moeda"
+            name="currency"
+            value={ currency }
+            onChange={ this.onInputChange }
+            data-testid="currency-input"
+          >
+            { currencies.map((curr) => this.renderOption(curr)) }
+          </select>
+        </label>
+        <label htmlFor="method">
+          Method
+          <select
+            className="choices"
+            id="method"
+            name="method"
+            value={ method }
+            onChange={ this.onInputChange }
+            data-testid="method-input"
+          >
+            { arrMethod.map((curr) => this.renderOption(curr)) }
+          </select>
+        </label>
+        <label htmlFor="tag">
+          Tag
+          <select
+            className="choices"
+            id="tag"
+            name="tag"
+            value={ tag }
+            onChange={ this.onInputChange }
+            data-testid="tag-input"
+          >
+            { arrTag.map((curr) => this.renderOption(curr)) }
+          </select>
+        </label>
+
         <button
           type="button"
           data-testid="btn-login"
@@ -156,7 +198,7 @@ FormExpense.propTypes = {
   currQuotation: PropTypes.shape(
     PropTypes.any,
   ).isRequired,
-  isQuotationAvailable: PropTypes.bool.isRequired,
+  // isQuotationAvailable: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
 };
 
@@ -164,7 +206,7 @@ FormExpense.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   getCurrencies: () => dispatch(fetchCurrencies()),
   quotation: () => dispatch(fetchCurrQuotation()),
-  saveExpense: (expense) => dispatch(setExpenses(expense)),
+  saveExpense: (expense) => dispatch(addExpense(expense)),
   calcTotal: () => dispatch(setTotal()),
 });
 

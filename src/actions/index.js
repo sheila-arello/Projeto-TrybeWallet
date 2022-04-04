@@ -3,7 +3,8 @@
 import fetchAPICurrencies from '../services/api';
 
 export const login = (value) => ({ type: 'LOGIN', value });
-export const setExpenses = (expense) => ({ type: 'SET_EXPENSES', expense });
+export const setAllExpenses = (expenses) => ({ type: 'SET_ALL_EXPENSES', expenses });
+export const addExpense = (expense) => ({ type: 'ADD_EXPENSE', expense });
 
 const actionSetTotal = (total) => ({ type: 'SET_TOTAL', total });
 const getCurrencies = (value) => ({ type: 'GET_CURRENCIES', value });
@@ -31,9 +32,7 @@ export function fetchCurrQuotation() {
     dispatch(actionRequestAPI());
     try {
       const data = await fetchAPICurrencies();
-      const currencies = data;
-      // console.log(currencies);
-      dispatch(getQuotation(currencies));
+      dispatch(getQuotation(data));
     } catch (error) {
       dispatch(failedRequest(error));
     }
@@ -48,7 +47,6 @@ export function setTotal() {
       const index = expense.currency;
       const cambio = parseFloat(expense.exchangeRates[index].ask);
       const expenseTotal = expenseValue * cambio;
-      console.log(expenseTotal);
       return acc + expenseTotal;
     }, 0);
     dispatch(actionSetTotal(total));
