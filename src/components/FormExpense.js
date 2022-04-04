@@ -34,9 +34,6 @@ class FormExpense extends React.Component {
   }
 
   onSubmitButtonClick = () => {
-    // event.preventDefault();
-    // const { quotation } = this.props;
-    // await quotation();
     const {
       id,
       currency,

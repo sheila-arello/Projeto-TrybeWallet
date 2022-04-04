@@ -5,14 +5,14 @@ import { setAllExpenses, setTotal } from '../actions';
 import './TableExpense.css';
 
 class TableExpense extends React.Component {
-  handleDelete = ({ target }) => {
+  handleDelete = (id) => {
     // excluir expense do estado global
-    const deleteElem = parseInt(target.parentElement.parentElement.id, 10);
-    console.log(typeof deleteElem);
+    // const deleteElem = parseInt(target.parentElement.parentElement.id, 10);
+    // console.log(typeof deleteElem);
     const { expenses, saveExpenses, calcTotal } = this.props;
-    if (expenses.length === 1) return [];
-    const newExpenses = expenses.filter((expense, index) => index !== deleteElem);
-    console.log(newExpenses);
+    // if (expenses.length === 1) return [];
+    const newExpenses = expenses.filter((expense) => expense.id !== id);
+    // console.log(newExpenses);
     saveExpenses(newExpenses);
     calcTotal();
   }
@@ -21,7 +21,7 @@ class TableExpense extends React.Component {
     const { expenses } = this.props;
     if (expenses.length === 0) return null;
     return (
-      expenses.map((expense, index) => {
+      expenses.map((expense) => {
         const moeda = expense.exchangeRates[expense.currency];
         // const rate = Math.round(parseFloat(moeda.ask).toFixed(2));
         const rate = parseFloat(moeda.ask).toFixed(2);
@@ -29,7 +29,7 @@ class TableExpense extends React.Component {
         const conversão = 'Real'; // moeda.name.split('/')[1];
         const vlrConverted = parseFloat(expense.value) * parseFloat(moeda.ask); // parseFloat(moeda.ask);
         return (
-          <tr className="tr-expenses" id={ index } key={ index }>
+          <tr className="tr-expenses" id={ expense.id } key={ expense.id }>
             <td role="cell">{ expense.description }</td>
             <td role="cell">{ expense.tag }</td>
             <td role="cell">{ expense.method }</td>
@@ -48,7 +48,7 @@ class TableExpense extends React.Component {
               <button
                 type="button"
                 data-testid="delete-btn"
-                onClick={ (e) => this.handleDelete(e) }
+                onClick={ () => this.handleDelete(expense.id) }
               >
                 Excluir
               </button>

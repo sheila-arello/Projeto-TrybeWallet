@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import './Header.css';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { totalExpenses } from '../actions';
+import { setTotal } from '../actions';
 
 class Header extends Component {
+  componentDidMount = () => {
+    const { calcTotal } = this.props;
+    calcTotal();
+  }
+
   render() {
     const { email, total } = this.props;
 
@@ -33,12 +38,17 @@ class Header extends Component {
 Header.propTypes = {
   email: PropTypes.string.isRequired,
   total: PropTypes.number.isRequired,
+  calcTotal: PropTypes.func.isRequired,
 };
 
 // mapeie o estado global para a propriedade da sua aplicação
+const mapDispatchToProps = (dispatch) => ({
+  calcTotal: () => dispatch(setTotal()),
+});
+
 const mapStateToProps = (state) => ({
   email: state.user.email,
   total: state.wallet.total,
 });
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
