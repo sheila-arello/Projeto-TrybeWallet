@@ -8,19 +8,28 @@ class TableExpense extends React.Component {
     const { expenses } = this.props;
     if (expenses.length === 0) return null;
     return (
-      expenses.map((expense) => (
-        <tr className="tr-expenses" key={ expense.key }>
-          <td>{ expense.description }</td>
-          <td>{ expense.tag }</td>
-          <td>{ expense.method }</td>
-          <td>{ expense.value }</td>
-          <td>{ expense.currency }</td>
-          <td>{ expense.exchangeRates[expense.currency].ask }</td>
-          <td>XXX</td>
-          <td>BRL</td>
-          <td>Editar/Excluir</td>
-        </tr>
-      )));
+      expenses.map((expense) => {
+        const moeda = expense.exchangeRates[expense.currency];
+        // const rate = Math.round(parseFloat(moeda.ask).toFixed(2));
+        const rate = parseFloat(moeda.ask).toFixed(2);
+        console.log(rate);
+        const moedaName = moeda.name.split('/')[0];
+        const conversão = 'Real'; // moeda.name.split('/')[1];
+        const vlrConverted = parseFloat(expense.value) * parseFloat(moeda.ask); // parseFloat(moeda.ask);
+        return (
+          <tr className="tr-expenses" key={ expense.key }>
+            <td role="cell">{ expense.description }</td>
+            <td role="cell">{ expense.tag }</td>
+            <td role="cell">{ expense.method }</td>
+            <td role="cell">{ parseFloat(expense.value).toFixed(2) }</td>
+            <td role="cell">{ moedaName }</td>
+            <td role="cell">{ rate }</td>
+            <td role="cell">{ vlrConverted.toFixed(2) }</td>
+            <td role="cell">{ conversão }</td>
+            <td role="cell">Editar/Excluir</td>
+          </tr>
+        );
+      }));
   }
 
   renderThead = () => {
@@ -67,21 +76,10 @@ class TableExpense extends React.Component {
 }
 
 TableExpense.propTypes = {
-  // getCurrencies: PropTypes.func.isRequired,
-  // quotation: PropTypes.func.isRequired,
-  // saveExpense: PropTypes.func.isRequired,
-  // calcTotal: PropTypes.func.isRequired,
   expenses: PropTypes.arrayOf(
     PropTypes.any,
   ).isRequired,
-  // currQuotation: PropTypes.shape(
-  //   PropTypes.any,
-  // ).isRequired,
-  // isQuotationAvailable: PropTypes.bool.isRequired,
-  // loading: PropTypes.bool.isRequired,
 };
-
-// mapeie o estado global para a propriedade da sua aplicação
 
 const mapStateToProps = (state) => ({
   expenses: state.wallet.expenses,

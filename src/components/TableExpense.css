@@ -28,3 +28,7 @@ th , td {
   min-width: 120px;
 }
 
+.tr-expenses td {
+  text-align: center;
+}
+
