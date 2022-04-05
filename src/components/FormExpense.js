@@ -17,7 +17,7 @@ class FormExpense extends React.Component {
       currency: 'USD',
       tag: alim,
       method: 'Dinheiro',
-      value: '0',
+      value: '',
       description: '',
       expense: {},
     };
@@ -54,27 +54,23 @@ class FormExpense extends React.Component {
       currency: 'USD',
       tag: alim,
       method: 'Dinheiro',
-      value: '0',
+      value: '',
       description: '',
     }, () => this.setExpenses());
   }
 
   setExpenses = async () => {
     const { quotation } = this.props;
-    // const { quotation } = this.props;
     await quotation();
     // Dispara action para salvar expense com state local + quotation
     // a mesma action reseta o isQuotationAvailable
     const { currQuotation, saveExpense, calcTotal } = this.props;
-
-    console.log('nova cotacao: ', currQuotation);
+    // console.log('nova cotacao: ', currQuotation);
     const { expense } = this.state;
-    // if (expense === undefined) console.log(expense);
     const objExpense = {
       ...expense,
       exchangeRates: currQuotation,
     };
-    // console.log('Agora sim dispara as açoes');
     saveExpense(objExpense);
     calcTotal();
   }
@@ -85,14 +81,7 @@ class FormExpense extends React.Component {
   //   return both.map((li) => <Input name={ li[0] } placeH={ li[1] } key={ li[0] } />);
   // }
 
-  renderOption = (curr) => (
-    <option
-      key={ curr }
-      value={ curr }
-    >
-      { curr }
-    </option>
-  );
+  renderOption = (curr) => <option key={ curr } value={ curr }>{ curr }</option>
 
   render() {
     const { currencies, loading } = this.props;
@@ -139,8 +128,8 @@ class FormExpense extends React.Component {
             id="moeda"
             name="currency"
             value={ currency }
-            onChange={ this.onInputChange }
             data-testid="currency-input"
+            onChange={ this.onInputChange }
           >
             { currencies.map((curr) => this.renderOption(curr)) }
           </select>
@@ -194,9 +183,13 @@ FormExpense.propTypes = {
   ).isRequired,
   currQuotation: PropTypes.shape(
     PropTypes.any,
-  ).isRequired,
+  ),
   // isQuotationAvailable: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
+};
+
+FormExpense.defaultProps = {
+  currQuotation: {},
 };
 
 // mapeie o estado global para a propriedade da sua aplicação

@@ -29,7 +29,6 @@ export function fetchCurrencies() {
 
 export function fetchCurrQuotation() {
   return async (dispatch) => {
-    dispatch(actionRequestAPI());
     try {
       const data = await fetchAPICurrencies();
       dispatch(getQuotation(data));
