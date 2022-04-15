@@ -34,11 +34,6 @@ function wallet(state = initialState, action) {
       isLoading: false,
       isQuotationAvailable: true,
     };
-  case 'RESET_QUOTE':
-    return {
-      ...state,
-      isQuotationAvailable: false,
-    };
   case 'SET_TOTAL':
     return {
       ...state,
@@ -50,6 +45,11 @@ function wallet(state = initialState, action) {
       expenses: [...state.expenses, action.expense],
       isQuotationAvailable: false,
     };
+  case 'UPT_EXPENSE':
+    return {
+      ...state,
+      expenses: action.expenses,
+    };
   case 'SET_ALL_EXPENSES':
     return {
       ...state,
@@ -60,4 +60,5 @@ function wallet(state = initialState, action) {
     return state;
   }
 }
+
 export default wallet;

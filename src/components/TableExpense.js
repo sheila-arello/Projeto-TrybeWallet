@@ -1,24 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { setAllExpenses, setTotal } from '../actions';
+import { setAllExpenses, setTotal, setEditId } from '../actions';
 import './TableExpense.css';
 
 class TableExpense extends React.Component {
   handleDelete = (id) => {
-    // excluir expense do estado global
-    // const deleteElem = parseInt(target.parentElement.parentElement.id, 10);
-    // console.log(typeof deleteElem);
     const { expenses, saveExpenses, calcTotal } = this.props;
-    // if (expenses.length === 1) return [];
     const newExpenses = expenses.filter((expense) => expense.id !== id);
-    // console.log(newExpenses);
     saveExpenses(newExpenses);
     calcTotal();
   }
 
   renderExpenses = () => {
-    const { expenses } = this.props;
+    const { expenses, setId } = this.props;
     if (expenses.length === 0) return null;
     return (
       expenses.map((expense) => {
@@ -42,6 +37,7 @@ class TableExpense extends React.Component {
               <button
                 type="button"
                 data-testid="edit-btn"
+                onClick={ () => setId(expense.id) }
               >
                 Editar
               </button>
@@ -104,6 +100,7 @@ class TableExpense extends React.Component {
 TableExpense.propTypes = {
   saveExpenses: PropTypes.func.isRequired,
   calcTotal: PropTypes.func.isRequired,
+  setId: PropTypes.func.isRequired,
   expenses: PropTypes.arrayOf(
     PropTypes.any,
   ).isRequired,
@@ -115,6 +112,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   saveExpenses: (expenses) => dispatch(setAllExpenses(expenses)),
+  setId: (id) => dispatch(setEditId(id)),
   calcTotal: () => dispatch(setTotal()),
 });
 
